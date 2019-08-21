@@ -57,7 +57,7 @@ public class HinhNenAdapter  extends RecyclerView.Adapter<HinhNenAdapter.ViewHod
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public class ViewHodelA extends RecyclerView.ViewHolder {

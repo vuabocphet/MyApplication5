@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.developer.myapplication.retrofit.APIClient;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         list = new ArrayList<>();
         hinhNenAdapter = new HinhNenAdapter(this, list);
         linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(hinhNenAdapter);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -49,33 +51,33 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getData() {
-
-        dataClient.getDataALL("flickr.favorites.getList", "24bf810575bc5bfbe2aef1ed6cd4517b", "63356846%40N04", "json", "1", "views,%20media,%20path_alias,%20url_sq,%20url_t,%20url_s,%20url_q,%20url_m,%20url_n,%20url_z,%20url_c,%20url_l,%20url_o", "10", "2").enqueue(new Callback<List<HinhNen>>() {
+        list.clear();
+        dataClient.getDataALL().enqueue(new Callback<HinhNen>() {
             @Override
-            public void onResponse(Call<List<HinhNen>> call, Response<List<HinhNen>> response) {
+            public void onResponse(Call<HinhNen> call, Response<HinhNen> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(MainActivity.this, response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                list.clear();
 
-                for (HinhNen hinhNen : response.body()) {
+                Log.e("ABC", response.body().getStat() + "");
 
-                    for (Photo photo : hinhNen.getPhotos().getPhoto()) {
+                for (Photo photo : response.body().getPhotos().getPhoto()) {
 
-                        list.add(photo.getUrlC());
-                        list.add(photo.getUrlL());
-                        list.add(photo.getUrlM());
-                        list.add(photo.getUrlN());
-                        list.add(photo.getUrlQ());
-                        list.add(photo.getUrlC());
-                        list.add(photo.getUrlS());
-                        list.add(photo.getUrlSq());
-
-                    }
+                    list.add(photo.getUrlC());
+                    list.add(photo.getUrlL());
+                    list.add(photo.getUrlM());
+                    list.add(photo.getUrlN());
+                    list.add(photo.getUrlQ());
+                    list.add(photo.getUrlC());
+                    list.add(photo.getUrlS());
+                    list.add(photo.getUrlSq());
 
                 }
+
+
+                Log.e("LIST", list.size() + "");
 
                 swipeRefreshLayout.setRefreshing(false);
 
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<HinhNen>> call, Throwable t) {
+            public void onFailure(Call<HinhNen> call, Throwable t) {
                 Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 getData();
             }
